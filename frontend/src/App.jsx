@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+const API_URL = 'https://lab1-backend.azurewebsites.net';
+
 function App() {
   const [display, setDisplay] = useState('0')
   const [num1, setNum1] = useState('')
@@ -8,7 +10,6 @@ function App() {
   const [operation, setOperation] = useState(null)
   const [history, setHistory] = useState([])
   const [waitingForSecondNumber, setWaitingForSecondNumber] = useState(false)
-  const API_URL = import.meta.env.VITE_API_URL || 'lab1-backend.azurewebsites.net';
 
   useEffect(() => {
     fetchHistory()
@@ -16,7 +17,7 @@ function App() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch('${API_URL}/history.php')
+      const response = await fetch(`${API_URL}/history.php`)
       const data = await response.json()
       if (data.history) {
         setHistory(data.history)
@@ -28,7 +29,7 @@ function App() {
 
   const saveToHistory = async (historyEntry) => {
     try {
-      const response = await fetch('${API_URL}/history.php', {
+      const response = await fetch(`${API_URL}/history.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'add', entry: historyEntry })
@@ -39,6 +40,47 @@ function App() {
       }
     } catch (error) {
       console.error('Error saving history:', error)
+    }
+  }
+
+  const performCalculation = async () => {
+    const n1 = parseFloat(num1)
+    const n2 = parseFloat(display)
+    
+    try {
+      const response = await fetch(`${API_URL}/calculate.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ num1: n1, num2: n2, operation })
+      })
+      
+      const data = await response.json()
+      
+      const historyEntry = {
+        expression: `${n1} ${operation} ${n2}`,
+        result: data.result,
+        timestamp: new Date().toLocaleString('pl-PL')
+      }
+      
+      await saveToHistory(historyEntry)
+      
+      return data.result
+    } catch (error) {
+      console.error('Error:', error)
+      return 'Error'
+    }
+  }
+
+  const clearHistory = async () => {
+    try {
+      await fetch(`${API_URL}/history.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'clear' })
+      })
+      setHistory([])
+    } catch (error) {
+      console.error('Error clearing history:', error)
     }
   }
 
@@ -75,34 +117,6 @@ function App() {
     setOperation(op)
   }
 
-  const performCalculation = async () => {
-    const n1 = parseFloat(num1)
-    const n2 = parseFloat(display)
-    
-    try {
-      const response = await fetch('${API_URL}/calculate.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ num1: n1, num2: n2, operation })
-      })
-      
-      const data = await response.json()
-      
-      const historyEntry = {
-        expression: `${n1} ${operation} ${n2}`,
-        result: data.result,
-        timestamp: new Date().toLocaleString('pl-PL')
-      }
-      
-      await saveToHistory(historyEntry)
-      
-      return data.result
-    } catch (error) {
-      console.error('Error:', error)
-      return 'Error'
-    }
-  }
-
   const handleEquals = async () => {
     if (operation && num1 !== '') {
       const result = await performCalculation()
@@ -119,20 +133,6 @@ function App() {
     setNum2('')
     setOperation(null)
     setWaitingForSecondNumber(false)
-  }
-
-  const clearHistory = async () => {
-    try {
-      const response = await fetch('${API_URL}/history.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'clear' })
-      })
-      const data = await response.json()
-      setHistory([])
-    } catch (error) {
-      console.error('Error clearing history:', error)
-    }
   }
 
   const loadFromHistory = (expression, result) => {

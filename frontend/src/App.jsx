@@ -8,6 +8,7 @@ function App() {
   const [operation, setOperation] = useState(null)
   const [history, setHistory] = useState([])
   const [waitingForSecondNumber, setWaitingForSecondNumber] = useState(false)
+  const API_URL = import.meta.env.VITE_API_URL || 'https://calculator-backend-pwch.azurewebsites.net';
 
   useEffect(() => {
     fetchHistory()
@@ -15,7 +16,7 @@ function App() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch('http://localhost:8000/history.php')
+      const response = await fetch('${API_URL}/history.php')
       const data = await response.json()
       if (data.history) {
         setHistory(data.history)
@@ -27,7 +28,7 @@ function App() {
 
   const saveToHistory = async (historyEntry) => {
     try {
-      const response = await fetch('http://localhost:8000/history.php', {
+      const response = await fetch('${API_URL}/history.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'add', entry: historyEntry })
@@ -79,7 +80,7 @@ function App() {
     const n2 = parseFloat(display)
     
     try {
-      const response = await fetch('http://localhost:8000/calculate.php', {
+      const response = await fetch('${API_URL}/calculate.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ num1: n1, num2: n2, operation })
@@ -122,7 +123,7 @@ function App() {
 
   const clearHistory = async () => {
     try {
-      const response = await fetch('http://localhost:8000/history.php', {
+      const response = await fetch('${API_URL}/history.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'clear' })

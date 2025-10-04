@@ -8,7 +8,7 @@ function App() {
   const [operation, setOperation] = useState(null)
   const [history, setHistory] = useState([])
   const [waitingForSecondNumber, setWaitingForSecondNumber] = useState(false)
-  const API_URL = import.meta.env.VITE_API_URL || 'https://calculator-backend-pwch.azurewebsites.net';
+  const API_URL = import.meta.env.VITE_API_URL || 'lab1-backend.azurewebsites.net';
 
   useEffect(() => {
     fetchHistory()

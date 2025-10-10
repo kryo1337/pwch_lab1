@@ -15,13 +15,6 @@ export default defineConfig({
         comments: false
       }
     },
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom']
-        }
-      }
-    },
     sourcemap: false,
     chunkSizeWarningLimit: 1000
   }

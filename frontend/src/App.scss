@@ -1,3 +1,9 @@
+$primary: #667eea;
+$secondary: #764ba2;
+$success: #48bb78;
+$danger: #f56565;
+$spacing: 20px;
+
 * {
   margin: 0;
   padding: 0;
@@ -6,12 +12,12 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, $primary 0%, $secondary 100%);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: $spacing;
 }
 
 .calculator-container {
@@ -25,7 +31,7 @@ body {
 
 .calculator {
   background: white;
-  border-radius: 20px;
+  border-radius: $spacing;
   padding: 30px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   width: 380px;
@@ -73,21 +79,21 @@ button:active {
 }
 
 .operator {
-  background: #667eea;
+  background: $primary;
   color: white;
-}
-
-.operator:hover {
-  background: #5568d3;
+  
+  &:hover {
+    background: darken($primary, 10%);
+  }
 }
 
 .equals {
-  background: #48bb78;
+  background: $success;
   color: white;
-}
-
-.equals:hover {
-  background: #38a169;
+  
+  &:hover {
+    background: darken($success, 10%);
+  }
 }
 
 .span-2 {
@@ -121,16 +127,16 @@ button:active {
 }
 
 .clear-history {
+  background: $danger;
+  color: white;
   padding: 10px 20px;
   font-size: 0.9rem;
-  background: #f56565;
-  color: white;
   border-radius: 5px;
   margin-left: 10px;
-}
-
-.clear-history:hover {
-  background: #e53e3e;
+  
+  &:hover {
+    background: darken($danger, 10%);
+  }
 }
 
 .history-list {
